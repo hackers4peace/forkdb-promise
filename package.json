@@ -1,0 +1,23 @@
+{
+  "name": "forkdb-promise",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackers4peace/forkdb-promise.git"
+  },
+  "keywords": [
+    "forkdb",
+    "promise"
+  ],
+  "author": "",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/hackers4peace/forkdb-promise/issues"
+  },
+  "homepage": "https://github.com/hackers4peace/forkdb-promise#readme"
+}
