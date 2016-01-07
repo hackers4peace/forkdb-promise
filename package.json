@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/hackers4peace/forkdb-promise/issues"
   },
-  "homepage": "https://github.com/hackers4peace/forkdb-promise#readme"
+  "homepage": "https://github.com/hackers4peace/forkdb-promise#readme",
+  "dependencies": {
+    "bluebird": "^3.1.1",
+    "sprom": "^2.1.0"
+  }
 }
