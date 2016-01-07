@@ -1,5 +1,5 @@
-var sprom = require('sprom');
-var Promise = require('bluebird');
+var sprom = require('sprom')
+var Promise = require('bluebird')
 
 /**
  * Gets the most recent data for a key.
@@ -8,32 +8,25 @@ var Promise = require('bluebird');
  * @param {String} key The uri that is used as key
  * @returns {Promise} A promise which evaluates to the result value.
  */
-exports.get = function (db, key)
-{
-    if (db === "undefined")
-        throw "A fork db handle must be supplied!";
-
-    if (key === "undefined")
-        throw "A key must be supplied!";
-
-    return new Promise(function(accept, reject)
-    {
-        sprom.arr(db.forks(key)).then(function(headsArr)
-        {
-            if (headsArr.length == 0) {
-                reject("No data for the given key!");
-                return;
-            }
-
-            var readStream = db.createReadStream(headsArr[0].hash);
-
-            sprom.buf(readStream).then(function(data)
-            {
-                accept(JSON.parse(data.toString()));
-            });
-        });
-    });
-};
+module.exports.get = function (db, key) {
+  return new Promise(function (resolve, reject) {
+    if (db === 'undefined') {
+      reject('A fork db handle must be supplied!')
+    }
+    if (key === 'undefined') {
+      reject('A key must be supplied!')
+    }
+    sprom.arr(db.forks(key)).then(function (headsArr) {
+      if (headsArr.length === 0) {
+        return reject('No data for the given key!')
+      }
+      var readStream = db.createReadStream(headsArr[0].hash)
+      sprom.buf(readStream).then(function (data) {
+        resolve(JSON.parse(data.toString()))
+      })
+    })
+  })
+}
 
 /**
  * Appends new data to a key. If previous data is found, it is linked
@@ -44,37 +37,27 @@ exports.get = function (db, key)
  * @param {String} key The uri that should be used as key
  * @returns {Promise} A promise which evaluates to the insert hash.
  */
-exports.put = function (db, doc, key)
-{
-    if (db === "undefined")
-        throw "A fork db handle must be supplied!";
-
-    if (key === "undefined")
-        throw "A key must be supplied!";
-
-    if (doc === "undefined")
-        throw "A document must be supplied!";
-
-    return new Promise(function(resolve,reject)
-    {
-        var meta = {
-            "key" : key
-        };
-
-        sprom.arr(db.forks(key)).then(function(headsArr)
-        {
-            if (headsArr.length > 0)
-            {
-                meta.prev = headsArr[0];
-            }
-
-            var writeStream = db.createWriteStream(meta, function(err, id)
-            {
-                if (err) reject(err);
-                else resolve(id)
-            });
-
-            writeStream.end(JSON.stringify(doc));
-        });
-    });
-};
+module.exports.put = function (db, doc, key) {
+  return new Promise(function (resolve, reject) {
+    if (db === 'undefined') {
+      reject('A fork db handle must be supplied!')
+    }
+    if (key === 'undefined') {
+      reject('A key must be supplied!')
+    }
+    if (doc === 'undefined') {
+      reject('A document must be supplied!')
+    }
+    var meta = { key: key }
+    sprom.arr(db.forks(key)).then(function (headsArr) {
+      if (headsArr.length > 0) {
+        meta.prev = headsArr[0]
+      }
+      var writeStream = db.createWriteStream(meta, function (err, id) {
+        if (err) reject(err)
+        else resolve(id)
+      })
+      writeStream.end(JSON.stringify(doc))
+    })
+  })
+}
