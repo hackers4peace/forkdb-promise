@@ -6,7 +6,7 @@ var Promise = require('bluebird')
  *
  * @param {ForkDB} db A ForkDB connection
  * @param {String} key The uri that is used as key
- * @returns {Promise} A promise which evaluates to the result value.
+ * @returns {Promise} A promise which evaluates to the document as string
  */
 module.exports.get = function (db, key) {
   return new Promise(function (resolve, reject) {
@@ -22,7 +22,7 @@ module.exports.get = function (db, key) {
       }
       var readStream = db.createReadStream(headsArr[0].hash)
       sprom.buf(readStream).then(function (data) {
-        resolve(JSON.parse(data.toString()))
+        resolve(data.toString())
       })
     })
   })
@@ -33,11 +33,11 @@ module.exports.get = function (db, key) {
  * correspondingly.
  *
  * @param {ForkDB} db A ForkDB connection
- * @param {Object} doc The document that should be stored
  * @param {String} key The uri that should be used as key
+ * @param {String} doc The document that should be stored
  * @returns {Promise} A promise which evaluates to the insert hash.
  */
-module.exports.put = function (db, doc, key) {
+module.exports.put = function (db, key, doc) {
   return new Promise(function (resolve, reject) {
     if (db === 'undefined') {
       reject('A fork db handle must be supplied!')
@@ -53,11 +53,11 @@ module.exports.put = function (db, doc, key) {
       if (headsArr.length > 0) {
         meta.prev = headsArr[0]
       }
-      var writeStream = db.createWriteStream(meta, function (err, id) {
+      var writeStream = db.createWriteStream(meta, function (err, hash) {
         if (err) reject(err)
-        else resolve(id)
+        else resolve(hash)
       })
-      writeStream.end(JSON.stringify(doc))
+      writeStream.end(doc)
     })
   })
 }
